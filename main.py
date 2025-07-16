@@ -7,7 +7,8 @@ import requests
 from langsmith import traceable
 from config import (
     ls_client, # LangSmith client
-    langflow_api_key # LangFlow API key
+    langflow_api_key, # LangFlow API key
+    openai_api_key # OpenAI API key
 )
 from dataset import dataset # LangSmith dataset
 from judge import ( # LLM-as-judge evaluators
@@ -15,16 +16,25 @@ from judge import ( # LLM-as-judge evaluators
     concision # concision evaluator
 )
 
-PROVIDER = "Google Generative AI"
-MODEL_NAME = "gemini-2.5-flash"
 AGENT_ID = "Agent-20ggR"
 ENDPOINT_NAME = "evals_in_langflow"
+
+# A list of models to test. You can add more models here.
+# The `provider` should match the provider name in Langflow.
+# The `model_name` should match the model name for that provider.
+MODELS_TO_TEST = [
+    #{"provider": "Google Generative AI", "model_name": "gemini-2.5-flash", "api_key": "google_ai__API_KEY"},
+    {"provider": "OpenAI", "model_name": "gpt-4o", "api_key": openai_api_key},
+    {"provider": "OpenAI", "model_name": "gpt-4o-mini", "api_key": openai_api_key},
+    #{"provider": "Anthropic", "model_name": "claude-3-sonnet-20240229", "api_key": "anthropic__API_KEY"}
+]
+
 
 # ===========================
 # Run the eval
 # ===========================
 @traceable(name="langflow_agent_run_api")
-def call_langflow_api(input_value):
+def call_langflow_api(input_value, provider, model_name, api_key):
     """
     Call the Langflow API to run the evals_in_langflow flow.
     """
@@ -40,8 +50,9 @@ def call_langflow_api(input_value):
         "session_id": str(uuid.uuid4()),
         "tweaks": {
             AGENT_ID: {
-                "agent_llm": PROVIDER,
-                "model_name": MODEL_NAME
+                "agent_llm": provider,
+                "model_name": model_name,
+                "api_key": api_key
             }
         }
     }
@@ -75,21 +86,31 @@ def call_langflow_api(input_value):
         print(f"Error parsing response: {e}")
 
 
-def ls_target(inputs: dict) -> dict:
-    print(f"[DEBUG] ls_target received inputs: {inputs}")
-    # Extract the question from the nested structure
-    question = inputs.get("question")
-    if question is None and "inputs" in inputs:
-        question = inputs["inputs"].get("question")
-    return {"response": call_langflow_api(question)}
+def create_ls_target(provider, model_name, api_key):
+    def ls_target(inputs: dict) -> dict:
+        print(f"[DEBUG] ls_target received inputs: {inputs}")
+        # Extract the question from the nested structure
+        question = inputs.get("question")
+        if question is None and "inputs" in inputs:
+            question = inputs["inputs"].get("question")
+        return {"response": call_langflow_api(question, provider, model_name, api_key)}
+    return ls_target
 
 
 if __name__ == "__main__":
-    experiment_results = ls_client.evaluate(
-        ls_target, # your target function
-        data=dataset.name, # dataset name or ID
-        evaluators=[concision, helpfulness], # list of evaluator funcs
-        experiment_prefix=f"{ENDPOINT_NAME}-{PROVIDER}-{MODEL_NAME}" # experiment name in LangSmith
-    )
+    for model_config in MODELS_TO_TEST:
+        provider = model_config["provider"]
+        model_name = model_config["model_name"]
+        api_key = model_config["api_key"]
 
-    print("▶ Evaluation URL:", experiment_results)
+        target_func = create_ls_target(provider, model_name, api_key)
+
+        print(f"Running evaluation for {provider} - {model_name}")
+        experiment_results = ls_client.evaluate(
+            target_func, # your target function
+            data=dataset.name, # dataset name or ID
+            evaluators=[concision, helpfulness], # list of evaluator funcs
+            experiment_prefix=f"{ENDPOINT_NAME}-{provider}-{model_name}" # experiment name in LangSmith
+        )
+
+        print("▶ Evaluation URL:", experiment_results)
