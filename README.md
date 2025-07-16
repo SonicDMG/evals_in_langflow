@@ -10,19 +10,24 @@ Evals In
 
 # evals_in_langflow
 
-Langflow agent evaluation framework with LangSmith integration.
+![GitHub license](https://img.shields.io/github/license/SonicDMG/evals_in_langflow)
+![GitHub issues](https://img.shields.io/github/issues/SonicDMG/evals_in_langflow)
+![GitHub forks](https://img.shields.io/github/forks/SonicDMG/evals_in_langflow)
+![GitHub stars](https://img.shields.io/github/stars/SonicDMG/evals_in_langflow)
 
-## Overview
+[Langflow](https://langflow.org/) agent evaluation framework with [LangSmith](https://www.langchain.com/langsmith) integration.
 
-evals_in_langflow is a framework for evaluating Langflow agents using LangSmith. It provides a structured way to run, judge, and analyze agent outputs against datasets, making it easier to benchmark and improve your Langflow-based LLM applications.
+## 🌟 Overview
 
-## Features
+`evals_in_langflow` is a framework for evaluating [Langflow](https://langflow.org/) agents using [LangSmith](https://www.langchain.com/langsmith). It provides a structured way to run, judge, and analyze agent outputs against datasets, making it easier to benchmark and improve your Langflow-based LLM applications.
+
+## ✨ Features
 - Run agent evaluations against datasets
-- Integrate with LangSmith for tracing and analytics
+- Integrate with [LangSmith](https://www.langchain.com/langsmith) for tracing and analytics
 - Configurable via environment variables
 - Supports both Python and TypeScript ignores for clean development
 
-## Installation
+## 📦 Installation
 
 1. **Clone the repository:**
    ```bash
@@ -48,7 +53,7 @@ evals_in_langflow is a framework for evaluating Langflow agents using LangSmith.
    # Edit .env with your preferred editor
    ```
 
-## Usage
+## 🚀 Usage
 
 To run the main evaluation script:
 ```bash
@@ -58,7 +63,7 @@ python main.py
 - Make sure your `.env` file is properly configured with your API keys and project settings.
 - Results and logs will be output to the console and/or as configured in your environment.
 
-## Project Structure
+## 🏗️ Project Structure
 - `main.py` – Entry point for running evaluations
 - `config.py` – Configuration and environment variable handling
 - `dataset.py` – Dataset loading and management
@@ -66,8 +71,8 @@ python main.py
 - `requirements.txt` – Python dependencies
 - `.env.example` – Example environment configuration
 
-## Contributing
-Pull requests and issues are welcome! Please open an issue to discuss your ideas or report bugs.
+## 🙌 Contributing
+Pull requests and issues are welcome! Please open an [issue](https://github.com/SonicDMG/evals_in_langflow/issues) to discuss your ideas or report bugs.
 
-## License
-This project is licensed under the MIT License.
+## 📜 License
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
