@@ -5,9 +5,6 @@ from config import openai_client # OpenAI client
 
 def helpfulness(inputs: dict, outputs: dict, reference_outputs: dict) -> float:
     """Check if the response is helpful compared to the reference answer."""
-    print(f"[DEBUG] helpfulness inputs: {inputs}")
-    print(f"[DEBUG] helpfulness outputs: {outputs}")
-    print(f"[DEBUG] helpfulness reference_outputs: {reference_outputs}")
     # Extract question
     question = inputs.get("question")
     if question is None and "inputs" in inputs:
@@ -46,8 +43,6 @@ def helpfulness(inputs: dict, outputs: dict, reference_outputs: dict) -> float:
 
 def concision(outputs: dict, reference_outputs: dict) -> bool:
     """Check if the response is concise compared to the reference answer."""
-    print(f"[DEBUG] concision outputs: {outputs}")
-    print(f"[DEBUG] concision reference_outputs: {reference_outputs}")
     # Extract response
     response = outputs.get("response")
     if response is None and "output" in outputs:

@@ -8,7 +8,7 @@ from langsmith import traceable
 from config import (
     ls_client, # LangSmith client
     langflow_api_key, # LangFlow API key
-    openai_api_key # OpenAI API key
+    log, # Rich-formatted logger
 )
 from dataset import dataset # LangSmith dataset
 from judge import ( # LLM-as-judge evaluators
@@ -22,11 +22,33 @@ ENDPOINT_NAME = "evals_in_langflow"
 # A list of models to test. You can add more models here.
 # The `provider` should match the provider name in Langflow.
 # The `model_name` should match the model name for that provider.
+# The `api_key` should match the global variable for that provider in Langflow.
 MODELS_TO_TEST = [
-    #{"provider": "Google Generative AI", "model_name": "gemini-2.5-flash", "api_key": "google_ai__API_KEY"},
-    {"provider": "OpenAI", "model_name": "gpt-4o", "api_key": openai_api_key},
-    {"provider": "OpenAI", "model_name": "gpt-4o-mini", "api_key": openai_api_key},
-    #{"provider": "Anthropic", "model_name": "claude-3-sonnet-20240229", "api_key": "anthropic__API_KEY"}
+    #{
+    #    "provider": "Google Generative AI",
+    #    "model_name": "gemini-2.5-flash",
+    #    "api_key": "google_ai__API_KEY"
+    #},
+    {
+        "provider": "OpenAI",
+        "model_name": "gpt-4.1",
+        "api_key": "openai__API_KEY"
+    },
+    {
+        "provider": "OpenAI",
+        "model_name": "gpt-4.1-mini",
+        "api_key": "openai__API_KEY"
+    },
+    {
+        "provider": "OpenAI",
+        "model_name": "gpt-4.1-nano",
+        "api_key": "openai__API_KEY"
+    },
+    #{
+    #    "provider": "Anthropic",
+    #    "model_name": "claude-3-sonnet-20240229",
+    #    "api_key": "anthropic__API_KEY"
+    #}
 ]
 
 
@@ -38,7 +60,7 @@ def call_langflow_api(input_value, provider, model_name, api_key):
     """
     Call the Langflow API to run the evals_in_langflow flow.
     """
-    print(f"[DEBUG] call_langflow_api input_value: {input_value}")  # Debug input
+    log.debug("call_langflow_api input_value: %s", input_value)  # Debug input
     # API Configuration
     url = f"http://127.0.0.1:7860/api/v1/run/{ENDPOINT_NAME}"
 
@@ -77,18 +99,21 @@ def call_langflow_api(input_value, provider, model_name, api_key):
             .get("data")
             .get("text")
         )
-        print(f"[DEBUG] call_langflow_api output: {output}")  # Debug output
+        log.debug("call_langflow_api output: %s", output)  # Debug output
         return output
 
     except requests.exceptions.RequestException as e:
-        print(f"Error making API request: {e}")
+        log.error("Error making API request: %s", e)
     except ValueError as e:
-        print(f"Error parsing response: {e}")
+        log.error("Error parsing response: %s", e)
 
 
 def create_ls_target(provider, model_name, api_key):
+    """
+    Create a LangSmith target function for the Langflow API.
+    """
     def ls_target(inputs: dict) -> dict:
-        print(f"[DEBUG] ls_target received inputs: {inputs}")
+        log.debug("ls_target received inputs: %s", inputs)
         # Extract the question from the nested structure
         question = inputs.get("question")
         if question is None and "inputs" in inputs:
@@ -98,19 +123,23 @@ def create_ls_target(provider, model_name, api_key):
 
 
 if __name__ == "__main__":
+    log.info("\n[bold]Starting LangSmith Evals...[/bold]")
     for model_config in MODELS_TO_TEST:
-        provider = model_config["provider"]
-        model_name = model_config["model_name"]
-        api_key = model_config["api_key"]
+        PROVIDER = model_config["provider"]
+        MODEL_NAME = model_config["model_name"]
+        API_KEY = model_config["api_key"]
 
-        target_func = create_ls_target(provider, model_name, api_key)
+        target_func = create_ls_target(PROVIDER, MODEL_NAME, API_KEY)
 
-        print(f"Running evaluation for {provider} - {model_name}")
-        experiment_results = ls_client.evaluate(
-            target_func, # your target function
-            data=dataset.name, # dataset name or ID
-            evaluators=[concision, helpfulness], # list of evaluator funcs
-            experiment_prefix=f"{ENDPOINT_NAME}-{provider}-{model_name}" # experiment name in LangSmith
+        log.info(
+            "Running evaluation for [bold blue]%s[/bold blue] - [bold green]%s[/bold green] - %s",
+            PROVIDER,
+            MODEL_NAME,
+            API_KEY,
         )
-
-        print("▶ Evaluation URL:", experiment_results)
+        experiment_results = ls_client.evaluate(
+            target_func,  # your target function
+            data=dataset.name,  # dataset name or ID
+            evaluators=[concision, helpfulness],  # list of evaluator funcs
+            experiment_prefix=f"{ENDPOINT_NAME}-{PROVIDER}-{MODEL_NAME}"  # experiment name in LangSmith
+        )

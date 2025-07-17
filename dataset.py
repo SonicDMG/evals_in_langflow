@@ -1,7 +1,7 @@
 """
 This script creates or fetches an eval dataset using LangSmithfor the Langflow agent.
 """
-from config import ls_client # LangSmith client
+from config import ls_client, log # LangSmith client
 
 # Dataset name and description as they appear in LangSmith
 DATASET_NAME = "langflow-agent-evals"
@@ -50,23 +50,22 @@ examples = [
 ]
 
 datasets = ls_client.list_datasets()
-print("Datasets found:", [d.name for d in datasets])
-print("Has dataset?", ls_client.has_dataset(dataset_name=DATASET_NAME))
+log.info("LangSmith datasets found: %s", [d.name for d in datasets])
+log.info("Has dataset? %s", ls_client.has_dataset(dataset_name=DATASET_NAME))
 
 if ls_client.has_dataset(dataset_name=DATASET_NAME):
     dataset = ls_client.read_dataset(dataset_name=DATASET_NAME)
     # Check if dataset is empty
     examples_list = list(ls_client.list_examples(dataset_id=dataset.id))
-    print("Examples returned by list_examples:", examples_list)
-    print("Number of examples:", len(examples_list))
+    log.info("Number of examples: %s", len(examples_list))
     if not examples_list:
-        print("Dataset is empty, populating examples...")
+        log.info("Dataset is empty, populating examples...")
         for ex in examples:
             ls_client.create_example(inputs=ex["inputs"], outputs=ex["outputs"], dataset_id=dataset.id)
     else:
-        print("Dataset exists and is not empty. No action needed.")
+        log.info("Dataset exists and is not empty. No action needed.")
 else:
-    print("Dataset does not exist. Creating and populating examples...")
+    log.info("Dataset does not exist. Creating and populating examples...")
     dataset = ls_client.create_dataset(
         dataset_name=DATASET_NAME,
         description=DATASET_DESC
