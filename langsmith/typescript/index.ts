@@ -98,7 +98,7 @@ function createLsTarget(model: Record<string, string>) {
 // ===========================
 // Main Evaluation Loop
 // ===========================
-function main() {
+async function main() {
     console.log("Starting LangSmith Evals...");
 
     for (const model of MODELS_TO_TEST) {
@@ -108,7 +108,7 @@ function main() {
 
         // The `evaluate` function automatically uses the default LangSmith client,
         // which is configured via environment variables (LANGSMITH_API_KEY, etc.).
-        evaluate(
+        await evaluate(
             target,
             {
                 data: dataset.name,
