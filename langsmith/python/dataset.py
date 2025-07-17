@@ -1,5 +1,5 @@
 """
-This script creates or fetches an eval dataset using LangSmithfor the Langflow agent.
+This script creates or fetches an eval dataset using LangSmith for the Langflow agent.
 """
 from config import ls_client, log # LangSmith client
 

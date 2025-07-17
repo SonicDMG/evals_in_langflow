@@ -1,4 +1,6 @@
-"""Leave me alone linter """
+"""
+This file contains the configuration for the LangSmith Python client.
+"""
 import os
 import logging
 from rich.logging import RichHandler
@@ -10,7 +12,7 @@ from openai import OpenAI
 # Load environment variables from .env file
 load_dotenv()
 
-# Get the API key from the environment variable
+# Get the API key from the environment variables
 langchain_api_key = os.getenv("LANGCHAIN_API_KEY")
 langchain_project = os.getenv("LANGCHAIN_PROJECT")
 openai_api_key = os.getenv("OPENAI_API_KEY")
