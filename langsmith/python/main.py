@@ -4,7 +4,6 @@ and evaluates its performance using LangSmith.
 """
 import uuid
 import requests
-from langsmith import traceable
 from config import (
     ls_client, # LangSmith client
     langflow_api_key, # LangFlow API key
@@ -15,6 +14,7 @@ from judge import ( # LLM-as-judge evaluators
     helpfulness, # helpfulness evaluator
     concision # concision evaluator
 )
+from langsmith import traceable
 
 AGENT_ID = "Agent-20ggR"
 ENDPOINT_NAME = "evals_in_langflow"

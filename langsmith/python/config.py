@@ -6,8 +6,8 @@ import logging
 from rich.logging import RichHandler
 from rich.console import Console
 from dotenv import load_dotenv
-from langsmith import Client as LSClient, wrappers
 from openai import OpenAI
+from langsmith import Client as LSClient, wrappers
 
 # Load environment variables from .env file
 load_dotenv()

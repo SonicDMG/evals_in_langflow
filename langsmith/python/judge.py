@@ -29,7 +29,7 @@ def helpfulness(inputs: dict, outputs: dict, reference_outputs: dict) -> float:
         Score:
     """
     response_score = openai_client.chat.completions.create(
-        model="gpt-4.1",
+        model="gpt-4.1-mini",
         temperature=0,
         messages=[
             {"role": "user", "content": user_content},
