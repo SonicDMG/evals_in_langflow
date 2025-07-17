@@ -29,82 +29,57 @@ Evals In
 
 ## 📦 Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/SonicDMG/evals_in_langflow.git
-   cd evals_in_langflow
-   ```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/SonicDMG/evals_in_langflow.git
+    cd evals_in_langflow
+    ```
 
-2. **Set up a virtual environment (recommended):**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
+2.  **Configure environment variables:**
+    - Copy `.env.example` to `.env` and fill in your API keys and project info.
+    ```bash
+    cp .env.example .env
+    # Edit .env with your preferred editor
+    ```
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r langsmith/python/requirements.txt
-   ```
-
-4. **Configure environment variables:**
-   - Copy `.env.example` to `.env` and fill in your API keys and project info.
-   ```bash
-   cp .env.example .env
-   # Edit .env with your preferred editor
-   ```
+3.  **Install dependencies:**
+    Please refer to the `README.md` file within each provider's subdirectory for detailed installation instructions (e.g., `langsmith/python/README.md`).
 
 ## 🚀 Usage
 
-To run the main evaluation script:
-```bash
-python langsmith/python/main.py
-```
+This project contains language-specific implementations for running evaluations. Please refer to the `README.md` file within each subdirectory for detailed setup and execution instructions.
 
-- Make sure your `.env` file is properly configured with your API keys and project settings.
-- Results and logs will be output to the console and/or as configured in your environment.
+## ✅ Evaluation Providers
 
-## 📦 Evaluation Providers
+-   **[LangSmith](./langsmith/README.md)**: Contains examples for running evaluations using LangSmith.
+    -   [Python Implementation](./langsmith/python/README.md)
+    -   [TypeScript Implementation](./langsmith/typescript/README.md)
 
-This project supports multiple evaluation providers. Below are the instructions for each one.
-
-### LangSmith
-
-#### 📦 Installation
-
-1. **Install Python dependencies:**
-   ```bash
-   pip install -r langsmith/python/requirements.txt
-   ```
-
-#### 🚀 Usage
-
-To run the LangSmith evaluation script:
-```bash
-python langsmith/python/main.py
-```
-
-### Arize
-
-> 🏗️ **Note:** The Arize integration is currently under development.
-
-#### 📦 Installation
-
-*Instructions for installing Arize dependencies will be added here.*
-
-#### 🚀 Usage
-
-*Instructions for running Arize evaluations will be added here.*
+-   **[Arize](./arize/README.md)**: Contains examples for running evaluations using Arize. (Coming Soon)
 
 
 ## 🏗️ Project Structure
-- `langsmith/python/main.py` – Entry point for running evaluations
-- `langsmith/python/config.py` – Configuration and environment variable handling
-- `langsmith/python/dataset.py` – Dataset loading and management
-- `langsmith/python/judge.py` – Evaluation and scoring logic
-- `langsmith/python/requirements.txt` – Python dependencies
-- `langsmith/typescript/` – TypeScript version of the evaluation framework.
-- `arize/` – Scripts and configurations for running evaluations with Arize.
-- `.env.example` – Example environment configuration
+- `langsmith/`
+  - `python/`
+    - `main.py`: Entry point for Python evaluations.
+    - `config.py`: Configuration and environment variable handling.
+    - `dataset.py`: Dataset loading and management.
+    - `judge.py`: Evaluation and scoring logic.
+    - `requirements.txt`: Python dependencies.
+    - `README.md`: Python-specific setup and run instructions.
+  - `typescript/`
+    - `index.ts`: Entry point for TypeScript evaluations.
+    - `config.ts`: Configuration and environment variable handling.
+    - `dataset.ts`: Dataset loading and management.
+    - `judge.ts`: Evaluation and scoring logic.
+    - `package.json`: TypeScript dependencies.
+    - `tsconfig.json`: TypeScript compiler options.
+    - `README.md`: TypeScript-specific setup and run instructions.
+  - `README.md`: Links to language-specific implementations.
+- `arize/`
+  - `README.md`: (Coming Soon) Arize-specific setup and run instructions.
+- `.env.example`: Example environment configuration.
+- `README.md`: This file.
 
 ## 🙌 Contributing
 Pull requests and issues are welcome! Please open an [issue](https://github.com/SonicDMG/evals_in_langflow/issues) to discuss your ideas or report bugs.
