@@ -141,5 +141,9 @@ if __name__ == "__main__":
             target_func,  # your target function
             data=dataset.name,  # dataset name or ID
             evaluators=[concision, helpfulness],  # list of evaluator funcs
+            metadata={
+                "llm.provider": PROVIDER,
+                "llm.model": MODEL_NAME,
+            },
             experiment_prefix=f"{ENDPOINT_NAME}-{PROVIDER}-{MODEL_NAME}"  # experiment name in LangSmith
         )
