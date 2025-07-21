@@ -1,0 +1,10 @@
+arize-phoenix
+openinference-semantic-conventions
+openai
+opentelemetry-api
+opentelemetry-exporter-otlp
+opentelemetry-sdk
+python-dotenv
+requests
+rich
+tiktoken
