@@ -51,11 +51,11 @@ MODELS_TO_TEST = [
         "model_name": "gpt-4.1-nano",
         "api_key": "openai__API_KEY"
     },
-    {
-        "provider": "Anthropic",
-        "model_name": "claude-3-5-sonnet-latest",
-        "api_key": "anthropic__API_KEY"
-    }
+    #{
+    #    "provider": "Anthropic",
+    #    "model_name": "claude-3-5-sonnet-latest",
+    #    "api_key": "anthropic__API_KEY"
+    #}
 ]
 
 # ==============================================================================
