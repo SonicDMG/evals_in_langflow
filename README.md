@@ -55,7 +55,7 @@ This project contains language-specific implementations for running evaluations.
     -   [Python Implementation](./langsmith/python/README.md)
     -   [TypeScript Implementation](./langsmith/typescript/README.md)
 
--   **[Arize](./arize/README.md)**: Contains examples for running evaluations using Arize. (Coming Soon)
+-   **[Arize](./arize/README.md)**: Contains examples for running evaluations using Arize Phoenix.
 
 
 ## 🏗️ Project Structure
@@ -77,7 +77,12 @@ This project contains language-specific implementations for running evaluations.
     - `README.md`: TypeScript-specific setup and run instructions.
   - `README.md`: Links to language-specific implementations.
 - `arize/`
-  - `README.md`: (Coming Soon) Arize-specific setup and run instructions.
+  - `main.py`: Entry point for Python evaluations with Arize.
+  - `config.py`: Configuration and environment variable handling.
+  - `dataset.py`: Dataset loading and management.
+  - `judge.py`: Evaluation and scoring logic.
+  - `requirements.txt`: Python dependencies.
+  - `README.md`: Arize-specific setup and run instructions.
 - `.env.example`: Example environment configuration.
 - `README.md`: This file.
 
