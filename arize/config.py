@@ -22,21 +22,20 @@ langflow_api_key = os.getenv("LANGFLOW_API_KEY")
 
 # initialize clients
 phoenix_client = px.Client(
-    endpoint=phoenix_endpoint,
-    #headers={"X-API-KEY": phoenix_api_key}
+    endpoint=phoenix_endpoint
 )
 openai_client = OpenAI(api_key=openai_api_key)
 
 # A list of models to test. You can add more models here.
 # The `provider` should match the provider name in Langflow.
 # The `model_name` should match the model name for that provider.
-# The `api_key` should match the global variable for that provider in Langflow.
+# The `api_key` should match your global variable for that provider in Langflow.
 MODELS_TO_TEST = [
-    #{
-    #    "provider": "Google Generative AI",
-    #    "model_name": "gemini-1.5-flash",
-    #    "api_key": "google_ai__API_KEY"
-    #},
+    {
+        "provider": "Google Generative AI",
+        "model_name": "gemini-2.5-flash",
+        "api_key": "google_ai__API_KEY"
+    },
     {
         "provider": "OpenAI",
         "model_name": "gpt-4.1",
@@ -52,11 +51,11 @@ MODELS_TO_TEST = [
         "model_name": "gpt-4.1-nano",
         "api_key": "openai__API_KEY"
     },
-    #{
-    #    "provider": "Anthropic",
-    #    "model_name": "claude-3-sonnet-20240229",
-    #    "api_key": "anthropic__API_KEY"
-    #}
+    {
+        "provider": "Anthropic",
+        "model_name": "claude-3-5-sonnet-latest",
+        "api_key": "anthropic__API_KEY"
+    }
 ]
 
 # ==============================================================================
