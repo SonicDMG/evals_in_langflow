@@ -1,3 +1,6 @@
+"""
+This script deletes all sessions for a given flow endpoint name.
+"""
 import os
 import sys
 import requests
@@ -9,7 +12,6 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 # ─── Configure ────────────────────────────────────────────────────────────────
-# If using Langflow Cloud (e.g., Phoenix), set this to your specific instance URL.
 LANGFLOW_URL = os.getenv("LANGFLOW_URL")
 
 # Your Langflow API key (set in LANGFLOW_API_KEY env var)
@@ -63,13 +65,13 @@ def main():
 
     print(f"Fetching ID for flow with endpoint name '{FLOW_ENDPOINT_NAME}'…")
     flow_id = get_flow_id_by_name(FLOW_ENDPOINT_NAME)
-    
+
     if not flow_id:
         print(f"No flow found with endpoint name '{FLOW_ENDPOINT_NAME}'.")
         return
 
     print(f"Starting to fetch and delete sessions for flow {flow_id} in batches...")
-    
+
     processed_session_ids = set()
     total_deleted = 0
     page = 1
@@ -91,7 +93,7 @@ def main():
             break
 
         session_ids_on_page = {msg["session_id"] for msg in messages if isinstance(msg, dict) and "session_id" in msg}
-        
+
         new_sessions_to_delete = session_ids_on_page - processed_session_ids
 
         if new_sessions_to_delete:
@@ -107,7 +109,7 @@ def main():
         if len(messages) < per_page:
             print("Finished fetching all pages.")
             break
-            
+
         page += 1
 
     print(f"\n✨ Process complete. Total unique sessions cleared: {total_deleted}")
