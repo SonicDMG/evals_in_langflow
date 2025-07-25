@@ -17,14 +17,14 @@ from judge import ( # LLM-as-judge evaluators
 )
 from langsmith import traceable
 
-AGENT_ID = "Agent-20ggR"
+AGENT_ID = "Agent-AQzDw"
 ENDPOINT_NAME = "evals_in_langflow"
 
 
 # ===========================
 # Run the eval
 # ===========================
-@traceable(name="langflow_agent_run_api")
+@traceable(name="langflow_agent_run_api", client=ls_client)
 def call_langflow_api(input_value, provider, model_name, api_key):
     """
     Call the Langflow API to run the evals_in_langflow flow.

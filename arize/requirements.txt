@@ -1,4 +1,5 @@
-arize-phoenix
+arize-phoenix==11.8.0
+arize-phoenix-otel
 openinference-semantic-conventions
 openai
 opentelemetry-api

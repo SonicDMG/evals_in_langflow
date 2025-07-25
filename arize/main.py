@@ -7,40 +7,40 @@ from functools import partial
 import os
 import requests
 import tiktoken
+from phoenix.otel import register
 from phoenix.experiments import run_experiment
-from openinference.semconv.trace import SpanAttributes
-from openinference.semconv.resource import ResourceAttributes
-from openinference.instrumentation import TracerProvider
 from opentelemetry import trace
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from config import log, langflow_api_key, MODELS_TO_TEST
+from openinference.semconv.trace import SpanAttributes
+from config import (
+    log,
+    langflow_api_key,
+    MODELS_TO_TEST
+)
 from dataset import dataset
-from judge import helpfulness, concision
-
+from judge import (
+    helpfulness,
+    conciseness,
+    coherence
+)
 
 AGENT_ID = "Agent-20ggR"
 ENDPOINT_NAME = "evals_in_langflow"
 PROJECT_NAME = "evals_in_langflow"
 
-# Set up OpenTelemetry for Phoenix
-resource = Resource(attributes={ResourceAttributes.PROJECT_NAME: PROJECT_NAME})
-tracer_provider = TracerProvider(resource=resource)
+# Configure the Phoenix tracer
+tracer_provider = register(
+    protocol="http/protobuf",
+    project_name=PROJECT_NAME,
+    batch=True,
+    #auto_instrument=True
+)
+tracer = tracer_provider.get_tracer(__name__)
+
 headers = os.getenv("OTEL_EXPORTER_OTLP_HEADERS")
 endpoint = os.getenv("PHOENIX_COLLECTOR_ENDPOINT")
-# Ensure the endpoint for traces is correctly formatted
-traces_endpoint = f"{endpoint.rstrip('/')}/v1/traces"
-exporter = OTLPSpanExporter(
-    endpoint=traces_endpoint,
-    headers=dict(x.split("=") for x in headers.split(",")),
-)
-tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
-trace.set_tracer_provider(tracer_provider)
-tracer = trace.get_tracer("arize.evals")
-
 
 @tracer.llm
+#@tracer.chain
 def call_langflow_api(example, provider, model_name, api_key):
     """
     Call the Langflow API to run the evals_in_langflow flow.
@@ -110,7 +110,9 @@ if __name__ == "__main__":
         MODEL_NAME = model_config["model_name"]
         API_KEY = model_config["api_key"]
 
-        # Create a partial function with the model config
+        # Use partial to create a function with the model config
+        # because Phoenix expects a task function with only (example) as input.
+        # call_langflow_api expects (example, provider, model_name, and api_key)
         task = partial(
             call_langflow_api,
             provider=PROVIDER,
@@ -126,7 +128,7 @@ if __name__ == "__main__":
         experiment = run_experiment(
             dataset=dataset,
             task=task,
-            evaluators=[helpfulness, concision],
+            evaluators=[helpfulness, conciseness, coherence],
             experiment_name=f"{ENDPOINT_NAME}-{PROVIDER}-{MODEL_NAME}",
         )
         log.info("Experiment results: %s", experiment.url)

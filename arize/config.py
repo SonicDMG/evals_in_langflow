@@ -13,16 +13,17 @@ import phoenix as px
 load_dotenv()
 
 # Get the API key from the environment variables
+phoenix_endpoint = os.getenv("PHOENIX_COLLECTOR_ENDPOINT")
 phoenix_api_key = os.getenv("PHOENIX_API_KEY")
 otel_exporter_otlp_headers = os.getenv("OTEL_EXPORTER_OTLP_HEADERS")
 phoenix_client_headers = os.getenv("PHOENIX_CLIENT_HEADERS")
-phoenix_endpoint = os.getenv("PHOENIX_COLLECTOR_ENDPOINT")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 langflow_api_key = os.getenv("LANGFLOW_API_KEY")
 
 # initialize clients
 phoenix_client = px.Client(
-    endpoint=phoenix_endpoint
+    endpoint=phoenix_endpoint,
+    api_key=phoenix_api_key,
 )
 openai_client = OpenAI(api_key=openai_api_key)
 
@@ -38,15 +39,15 @@ MODELS_TO_TEST = [
     },
     {
         "provider": "OpenAI",
-        "model_name": "gpt-4.1",
+        "model_name": "gpt-4.1-mini",
         "api_key": "openai__API_KEY"
     },
     {
         "provider": "OpenAI",
-        "model_name": "gpt-4.1-mini",
+        "model_name": "gpt-4.0-mini",
         "api_key": "openai__API_KEY"
     },
-        {
+    {
         "provider": "OpenAI",
         "model_name": "gpt-4.1-nano",
         "api_key": "openai__API_KEY"

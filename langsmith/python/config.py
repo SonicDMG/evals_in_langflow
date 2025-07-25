@@ -19,7 +19,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 langflow_api_key = os.getenv("LANGFLOW_API_KEY")
 
 # initialize clients
-ls_client = LSClient()
+ls_client = LSClient(auto_batch_tracing=True)
 openai_client = wrappers.wrap_openai(OpenAI(api_key=openai_api_key))
 
 # A list of models to test. You can add more models here.
@@ -47,11 +47,11 @@ MODELS_TO_TEST = [
         "model_name": "gpt-4.1-nano",
         "api_key": "openai__API_KEY"
     },
-    #{
-    #    "provider": "Anthropic",
-    #    "model_name": "claude-3-sonnet-20240229",
-    #    "api_key": "anthropic__API_KEY"
-    #}
+    {
+        "provider": "Anthropic",
+        "model_name": "claude-3-7-sonnet-latest",
+        "api_key": "anthropic__API_KEY"
+    }
 ]
 
 # ==============================================================================
