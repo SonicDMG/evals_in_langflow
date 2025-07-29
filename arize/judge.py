@@ -11,6 +11,7 @@ from phoenix.experiments.evaluators import (
     CoherenceEvaluator
 )
 from phoenix.evals import OpenAIModel
+
 openai_model = OpenAIModel(model="gpt-4.1-mini")
 
 #helpfulness = HelpfulnessEvaluator(model=openai_model)

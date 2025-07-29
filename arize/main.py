@@ -7,6 +7,7 @@ from functools import partial
 import os
 import requests
 import tiktoken
+import nest_asyncio
 from phoenix.otel import register
 from phoenix.experiments import run_experiment
 from opentelemetry import trace
@@ -104,6 +105,7 @@ def call_langflow_api(example, provider, model_name, api_key):
 
 
 if __name__ == "__main__":
+    nest_asyncio.apply()
     log.info("\n[bold]Starting Arize Phoenix Evals...[/bold]")
     for model_config in MODELS_TO_TEST:
         PROVIDER = model_config["provider"]
