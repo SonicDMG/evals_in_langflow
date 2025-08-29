@@ -3,6 +3,7 @@ This script deletes all sessions for a given flow endpoint name.
 """
 import os
 import sys
+import argparse
 import requests
 from dotenv import load_dotenv
 
@@ -18,8 +19,8 @@ LANGFLOW_URL = os.getenv("LANGFLOW_URL")
 # You can generate this from the Settings -> Langflow API Keys menu in the UI.
 API_KEY = os.getenv("LANGFLOW_API_KEY")
 
-# The endpoint name of the flow whose sessions you want to clear
-FLOW_ENDPOINT_NAME = os.getenv("FLOW_ENDPOINT_NAME", "evals_in_langflow")
+# Default flow endpoint name (can be overridden by command line argument)
+DEFAULT_FLOW_ENDPOINT_NAME = os.getenv("FLOW_ENDPOINT_NAME", "evals_in_langflow")
 # ────────────────────────────────────────────────────────────────────────────────
 
 HEADERS = {
@@ -55,6 +56,26 @@ def delete_session_messages(session_id: str):
         print(f"✖ Failed to clear {session_id}: {resp.status_code} {resp.text}")
         return False
 
+def parse_arguments():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Delete all sessions for a given Langflow flow endpoint name.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python delete_sessions.py                           # Use default from environment
+  python delete_sessions.py my_flow_endpoint          # Delete sessions for specific flow
+  python delete_sessions.py --help                    # Show this help message
+        """
+    )
+    parser.add_argument(
+        "flow_endpoint_name",
+        nargs="?",
+        default=DEFAULT_FLOW_ENDPOINT_NAME,
+        help=f"Flow endpoint name to delete sessions for (default: {DEFAULT_FLOW_ENDPOINT_NAME})"
+    )
+    return parser.parse_args()
+
 def main():
     if not API_KEY or not LANGFLOW_URL:
         print("❌ Error: LANGFLOW_URL or LANGFLOW_API_KEY is not configured.", file=sys.stderr)
@@ -63,11 +84,15 @@ def main():
         print("  - LANGFLOW_API_KEY: Your Langflow API key.", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Fetching ID for flow with endpoint name '{FLOW_ENDPOINT_NAME}'…")
-    flow_id = get_flow_id_by_name(FLOW_ENDPOINT_NAME)
+    # Parse command line arguments
+    args = parse_arguments()
+    flow_endpoint_name = args.flow_endpoint_name
+
+    print(f"Fetching ID for flow with endpoint name '{flow_endpoint_name}'…")
+    flow_id = get_flow_id_by_name(flow_endpoint_name)
 
     if not flow_id:
-        print(f"No flow found with endpoint name '{FLOW_ENDPOINT_NAME}'.")
+        print(f"No flow found with endpoint name '{flow_endpoint_name}'.")
         return
 
     print(f"Starting to fetch and delete sessions for flow {flow_id} in batches...")

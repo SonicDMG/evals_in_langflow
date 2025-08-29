@@ -24,6 +24,7 @@ Evals In
 ## ✨ Features
 - Run agent evaluations against datasets
 - Integrate with multiple evaluation providers like [LangSmith](https://www.langchain.com/langsmith) and [Arize](https://arize.com/) for tracing and analytics
+- Compare single-agent vs multi-agent performance configurations
 - Configurable via environment variables
 - Supports both Python and TypeScript ignores for clean development
 
@@ -57,6 +58,8 @@ This project contains language-specific implementations for running evaluations.
 
 -   **[Arize](./arize/README.md)**: Contains examples for running evaluations using Arize Phoenix.
 
+-   **[Single vs Multi Agent](./single_vs_multi_agent/README.md)**: Specialized evaluations for comparing single-agent vs multi-agent performance configurations.
+
 
 ## 🏗️ Project Structure
 - `langsmith/`
@@ -83,6 +86,11 @@ This project contains language-specific implementations for running evaluations.
   - `judge.py`: Evaluation and scoring logic.
   - `requirements.txt`: Python dependencies.
   - `README.md`: Arize-specific setup and run instructions.
+- `single_vs_multi_agent/`
+  - `main.py`: Entry point for single vs multi agent comparison evaluations.
+  - `config.py`: Configuration for single vs multi agent evaluations.
+  - `requirements.txt`: Python dependencies.
+  - `README.md`: Setup and usage instructions for single vs multi agent evaluations.
 - `.env.example`: Example environment configuration.
 - `README.md`: This file.
 

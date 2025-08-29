@@ -1,13 +1,12 @@
 """
-This file contains the configuration for the LangSmith Python client.
+This file contains the configuration for the Single vs Multi Agent evaluation.
 """
 import os
 import logging
 from rich.logging import RichHandler
 from rich.console import Console
 from dotenv import load_dotenv
-from openai import OpenAI
-from langsmith import Client as LSClient, wrappers
+from langsmith import Client as LSClient
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,14 +14,12 @@ load_dotenv()
 # Get the API key from the environment variables
 langchain_api_key = os.getenv("LANGCHAIN_API_KEY")
 langchain_project = os.getenv("LANGCHAIN_PROJECT")
-openai_api_key = os.getenv("OPENAI_API_KEY")
 langflow_api_key = os.getenv("LANGFLOW_API_KEY")
 
 # initialize clients
 ls_client = LSClient(auto_batch_tracing=True)
-openai_client = wrappers.wrap_openai(OpenAI(api_key=openai_api_key))
 
-# A list of models to test. You can add more models here.
+# A list of models to test for single vs multi agent comparison
 # The `provider` should match the provider name in Langflow.
 # The `model_name` should match the model name for that provider.
 # The `api_key` should match the global variable for that provider in Langflow.
@@ -37,16 +34,28 @@ MODELS_TO_TEST = [
     #    "model_name": "gpt-4.1",
     #    "api_key": "openai__API_KEY"
     #},
-    {
-        "provider": "OpenAI",
-        "model_name": "gpt-4.1-mini",
-        "api_key": "openai__API_KEY"
-    },
+    #{
+    #    "provider": "OpenAI",
+    #    "model_name": "gpt-4.1-mini",
+    #    "api_key": "openai__API_KEY"
+    #},
     #{
     #    "provider": "OpenAI",
     #    "model_name": "gpt-4.1-nano",
     #    "api_key": "openai__API_KEY"
     #},
+    #{
+    #    "provider": "OpenAI",
+    #    "model_name": "gpt-oss-20b"
+    #},
+    #{
+    #    "provider": "MistralAI",
+    #    "model_name": "mathstral-7b-v0.1"
+    #},
+    {
+        "provider": "Qwen",
+        "model_name": "qwen3-4b-2507"
+    },
     #{
     #    "provider": "Anthropic",
     #    "model_name": "claude-3-7-sonnet-latest",
@@ -71,7 +80,7 @@ console_handler = RichHandler(
 )
 
 # CREATE A FILE HANDLER FOR DETAILED DEBUG LOGS
-file_handler = logging.FileHandler("langflow_eval.log")
+file_handler = logging.FileHandler("single_vs_multi_agent_eval.log")
 file_handler.setLevel(logging.DEBUG)
 
 # CREATE A FORMATTER FOR THE FILE HANDLER
@@ -82,3 +91,4 @@ file_handler.setFormatter(formatter)
 log.addHandler(console_handler)
 log.addHandler(file_handler)
 # ==============================================================================
+

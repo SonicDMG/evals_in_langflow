@@ -1,7 +1,7 @@
 """
-This script defines an LLM-as-judge evaluator for the Langflow agent.
+This script defines an LLM-as-judge evaluators for the Langflow agent.
 """
-from config import openai_client # OpenAI client
+from config import openai_client # OpenAI client and logger
 
 def helpfulness(inputs: dict, outputs: dict, reference_outputs: dict) -> float:
     """Check if the response is helpful compared to the reference answer."""
@@ -29,7 +29,7 @@ def helpfulness(inputs: dict, outputs: dict, reference_outputs: dict) -> float:
         Score:
     """
     response_score = openai_client.chat.completions.create(
-        model="gpt-4.1-mini",
+        model="gpt-5.1-mini",
         temperature=0,
         messages=[
             {"role": "user", "content": user_content},

@@ -20,7 +20,6 @@ from langsmith import traceable
 AGENT_ID = "Agent-AQzDw"
 ENDPOINT_NAME = "evals_in_langflow"
 
-
 # ===========================
 # Run the eval
 # ===========================
@@ -56,7 +55,7 @@ def call_langflow_api(input_value, provider, model_name, api_key):
 
     try:
         # Send API request
-        result = requests.request("POST", url, json=payload, headers=headers, timeout=30)
+        result = requests.request("POST", url, json=payload, headers=headers, timeout=300)
         result.raise_for_status()  # Raise exception for bad status codes
 
         response_json = result.json()
