@@ -16,7 +16,7 @@ The scripts in this directory are designed to:
 - `config.py` - Configuration and environment setup
 - `requirements.txt` - Python dependencies
 - `tests/` - Pytest test suite with LangSmith integration
-- `run_tests.py` - Test runner script
+- `validate_setup.py` - Environment validation script
 - `README.md` - This file
 
 ## Usage
@@ -26,10 +26,13 @@ The scripts in this directory are designed to:
 2. Install dependencies: `pip install -r requirements.txt`
 3. Run the evaluation: `python main.py`
 
+### Validating Your Setup
+1. Install dependencies: `pip install -r requirements.txt`
+2. Validate environment: `python validate_setup.py`
+
 ### Running Tests with LangSmith Integration
 1. Install dependencies: `pip install -r requirements.txt`
-2. Run tests: `python run_tests.py`
-3. Or run pytest directly: `pytest tests/ --langsmith-output`
+2. Run tests: `pytest tests/ --langsmith-output`
 
 ### Test Features
 - **LangSmith Integration**: All tests automatically sync to LangSmith datasets

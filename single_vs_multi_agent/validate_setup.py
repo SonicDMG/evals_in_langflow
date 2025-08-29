@@ -67,9 +67,7 @@ def test_directory_structure():
         'main.py',
         'config.py',
         'requirements.txt',
-        'tests/conftest.py',
-        'tests/test_single_vs_multi_agent.py',
-        'run_tests.py'
+        'tests/test_single_vs_multi_agent.py'
     ]
 
     missing_files = []
@@ -107,7 +105,7 @@ def main():
     if all_passed:
         print("🎉 All validation tests passed!")
         print("\nNext steps:")
-        print("1. Run: python run_tests.py")
+        print("1. Run: pytest tests/ --langsmith-output")
         print("2. Check LangSmith for your test results")
         print("3. Add your real datasets to the test files")
     else:
