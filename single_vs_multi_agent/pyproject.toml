@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "single_vs_multi_agent"
+version = "0.1.0"
+description = "Single vs Multi Agent Evaluation using LangSmith"
+requires-python = ">=3.8"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short"
+]
+markers = [
+    "unit: Unit tests (fast, mocked dependencies)",
+    "integration: Integration tests (real API calls)", 
+    "slow: Slow running tests",
+    "mock: Tests that use mocking",
+    "langsmith: Tests that use LangSmith features",
+    "real_api: Tests that make real API calls to external services"
+]
+filterwarnings = [
+    "ignore::pytest.PytestUnknownMarkWarning"
+]

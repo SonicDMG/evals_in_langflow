@@ -35,6 +35,8 @@ The scripts in this directory are designed to:
 2. Run tests: `pytest tests/ --langsmith-output`
 
 ### Test Features
+- **Dynamic Dataset Loading**: Tests automatically read the real Math Dataset from LangSmith instead of hardcoded questions
+- **Zero Maintenance**: Tests stay in sync with dataset updates automatically
 - **LangSmith Integration**: All tests automatically sync to LangSmith datasets
 - **Mocked API Calls**: Tests run without hitting real Langflow endpoints
 - **Rich Output**: Use `--langsmith-output` for detailed LangSmith results

@@ -92,7 +92,7 @@ def call_langflow_api(input_value, provider, model_name, api_key, endpoint_name)
     except requests.exceptions.RequestException as e:
         log.error("Error making API request: %s", e)
         return None
-    except ValueError as e:
+    except (ValueError, TypeError) as e:
         log.error("Error parsing response: %s", e)
         return None
 
