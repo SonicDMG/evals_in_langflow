@@ -28,3 +28,12 @@ markers = [
 filterwarnings = [
     "ignore::pytest.PytestUnknownMarkWarning"
 ]
+
+[tool.pylint.messages_control]
+disable = "broad-except,redefined-outer-name"
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.basic]
+good-names = "i,j,k,ex,Run,_,id,db"

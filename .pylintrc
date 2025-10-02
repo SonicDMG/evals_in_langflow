@@ -1,0 +1,11 @@
+[MESSAGES CONTROL]
+# Disable broad-except and redefined-outer-name warnings
+disable=broad-except,redefined-outer-name
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length=120
+
+[BASIC]
+# Good variable names regex
+good-names=i,j,k,ex,Run,_,id,db

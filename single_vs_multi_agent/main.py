@@ -7,13 +7,13 @@ import logging
 import requests
 from rich.logging import RichHandler
 from rich.console import Console
+from langsmith import traceable
 from config import (
     ls_client, # LangSmith client
     langflow_api_key, # LangFlow API key
     log, # Rich-formatted logger
     MODELS_TO_TEST, # List of models to test
 )
-from langsmith import traceable
 
 # Create a minimal app logger for clean output
 app_log = logging.getLogger("app")
@@ -39,7 +39,7 @@ dataset = ls_client.read_dataset(dataset_name="Math Dataset")
 
 # Configuration for single vs multi agent comparison
 AGENT_ID = "Agent-AQzDw"
-ENDPOINT_NAMES = ["math_eval_single_lms", "math_eval_multi_lms"]
+ENDPOINT_NAMES = ["math_eval_single_lms", "math_eval_noexp_lms", "math_eval_multi_lms"]
 
 @traceable(name="langflow_agent_run_api", client=ls_client)
 def call_langflow_api(input_value, provider, model_name, api_key, endpoint_name):
@@ -47,7 +47,7 @@ def call_langflow_api(input_value, provider, model_name, api_key, endpoint_name)
     Call the Langflow API to run the specified endpoint.
     """
     app_log.debug("call_langflow_api input_value: %s", input_value)
-    
+
     # API Configuration
     url = f"http://localhost:7860/api/v1/run/{endpoint_name}"
 
@@ -91,10 +91,13 @@ def call_langflow_api(input_value, provider, model_name, api_key, endpoint_name)
 
     except requests.exceptions.RequestException as e:
         log.error("Error making API request: %s", e)
-        return None
-    except (ValueError, TypeError) as e:
-        log.error("Error parsing response: %s", e)
-        return None
+        return f"API Error: {str(e)}"
+    except (KeyError, IndexError, AttributeError, ValueError, TypeError) as e:
+        log.error("Error parsing API response: %s", e)
+        return f"Response parsing error: {str(e)}"
+    except Exception as e:
+        log.error("Unexpected error: %s", e)
+        return f"Unexpected error: {str(e)}"
 
 
 def create_ls_target(provider, model_name, api_key, endpoint_name):
@@ -103,17 +106,17 @@ def create_ls_target(provider, model_name, api_key, endpoint_name):
     """
     def ls_target(inputs: dict) -> dict:
         app_log.debug("ls_target received inputs: %s", inputs)
-        
+
         # Extract the question from the nested structure
         question = inputs.get("question")
         if question is None and "inputs" in inputs:
             question = inputs["inputs"].get("question")
-        
+
         # Extract metadata if available (for math problems with units/rounding)
         metadata = inputs.get("metadata", {})
         if not metadata and "metadata" in inputs:
             metadata = inputs["metadata"]
-        
+
         # Enhance the question with metadata context if available
         enhanced_question = question
         if metadata:
@@ -132,7 +135,7 @@ def create_ls_target(provider, model_name, api_key, endpoint_name):
                     app_log.debug("Enhanced question with metadata: %s", enhanced_question)
 
         return {"response": call_langflow_api(enhanced_question, provider, model_name, api_key, endpoint_name)}
-    
+
     return ls_target
 
 
@@ -141,44 +144,43 @@ def run_evaluation_for_endpoint(endpoint_name):
     Run evaluation for a specific endpoint (single or multi agent).
     """
     log.info("Running evaluation for %s", endpoint_name)
-    
-    for model_config in MODELS_TO_TEST:
-        PROVIDER = model_config["provider"]
-        MODEL_NAME = model_config["model_name"]
-        if "api_key" in model_config:
-            API_KEY = model_config["api_key"]
-        else:
-            API_KEY = None
 
-        target_func = create_ls_target(PROVIDER, MODEL_NAME, API_KEY, endpoint_name)
+    for model_config in MODELS_TO_TEST:
+        provider = model_config["provider"]
+        model_name = model_config["model_name"]
+        if "api_key" in model_config:
+            api_key = model_config["api_key"]
+        else:
+            api_key = None
+
+        target_func = create_ls_target(provider, model_name, api_key, endpoint_name)
 
         log.info(
             "Running evaluation for [bold blue]%s[/bold blue] - [bold green]%s[/bold green] - %s",
-            PROVIDER,
-            MODEL_NAME,
-            API_KEY,
+            provider,
+            model_name,
+            api_key,
         )
-        
-        experiment_results = ls_client.evaluate(
+
+        ls_client.evaluate(
             target_func,
             data=dataset.name,
             metadata={
-                "llm.provider": PROVIDER,
-                "llm.model": MODEL_NAME,
+                "llm.provider": provider,
+                "llm.model": model_name,
                 "endpoint.type": endpoint_name,
             },
-            experiment_prefix=f"{endpoint_name}-{PROVIDER}-{MODEL_NAME}"
+            experiment_prefix=f"{endpoint_name}-{provider}-{model_name}"
         )
-        
-        log.info("Completed evaluation for %s - %s - %s", PROVIDER, MODEL_NAME, endpoint_name)
+
+        log.info("Completed evaluation for %s - %s - %s", provider, model_name, endpoint_name)
 
 
 if __name__ == "__main__":
     log.info("\n[bold]Starting Single vs Multi Agent Evaluation...[/bold]")
-    
+
     # Run evaluations for both single and multi agent endpoints
     for endpoint_name in ENDPOINT_NAMES:
         run_evaluation_for_endpoint(endpoint_name)
-    
-    log.info("\n[bold]Single vs Multi Agent Evaluation Complete![/bold]")
 
+    log.info("\n[bold]Single vs Multi Agent Evaluation Complete![/bold]")

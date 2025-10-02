@@ -6,6 +6,12 @@ import logging
 from rich.logging import RichHandler
 from rich.console import Console
 from dotenv import load_dotenv
+from openevals.llm import create_llm_as_judge
+from openevals.prompts import (
+    CORRECTNESS_PROMPT,
+    CONCISENESS_PROMPT,
+    HALLUCINATION_PROMPT
+)
 from langsmith import Client as LSClient
 
 # Load environment variables from .env file
@@ -15,9 +21,37 @@ load_dotenv()
 langchain_api_key = os.getenv("LANGCHAIN_API_KEY")
 langchain_project = os.getenv("LANGCHAIN_PROJECT")
 langflow_api_key = os.getenv("LANGFLOW_API_KEY")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # initialize clients
 ls_client = LSClient(auto_batch_tracing=True)
+
+# Initialize evaluators
+if openai_api_key:
+
+    # Create the evaluators
+    CORRECTNESS_EVALUATOR = create_llm_as_judge(
+        prompt=CORRECTNESS_PROMPT,
+        feedback_key="correctness",
+        model="openai:gpt-5-mini",
+    )
+
+    CONCISENESS_EVALUATOR = create_llm_as_judge(
+        prompt=CONCISENESS_PROMPT,
+        feedback_key="conciseness",
+        model="openai:gpt-5-mini",
+    )
+
+    HALLUCINATION_EVALUATOR = create_llm_as_judge(
+        prompt=HALLUCINATION_PROMPT,
+        feedback_key="hallucination",
+        model="openai:gpt-5-mini",
+    )
+else:
+    # If no OpenAI key, set evaluators to None
+    CORRECTNESS_EVALUATOR = None
+    CONCISENESS_EVALUATOR = None
+    HALLUCINATION_EVALUATOR = None
 
 # A list of models to test for single vs multi agent comparison
 # The `provider` should match the provider name in Langflow.
@@ -54,7 +88,8 @@ MODELS_TO_TEST = [
     #},
     {
         "provider": "Qwen",
-        "model_name": "qwen3-4b-2507"
+        "model_name": "qwen3-4b-2507",
+        "api_key": None
     },
     #{
     #    "provider": "Anthropic",
@@ -91,4 +126,3 @@ file_handler.setFormatter(formatter)
 log.addHandler(console_handler)
 log.addHandler(file_handler)
 # ==============================================================================
-

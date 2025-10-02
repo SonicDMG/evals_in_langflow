@@ -2,18 +2,11 @@
 Unit tests for single vs multi agent evaluations.
 These tests use mocked dependencies and don't make external API calls.
 """
-import sys
-from pathlib import Path
 from unittest.mock import patch, Mock
 import pytest
 from langsmith import testing as t
-
-# Add the parent directory to the path so we can import our modules
-parent_dir = Path(__file__).parent.parent
-sys.path.insert(0, str(parent_dir))
-
-from main import call_langflow_api, create_ls_target
-from config import ls_client
+from ..config import ls_client
+from ..main import call_langflow_api
 
 @pytest.fixture(scope="session")
 def dataset():
