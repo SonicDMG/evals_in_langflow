@@ -81,7 +81,7 @@ def test_single_agent_real_question(sample_dataset_examples, model_config, examp
         except Exception as e:
             print(f"Correctness evaluator error: {e}")
 
-    # Apply conciseness evaluator  
+    # Apply conciseness evaluator
     if CONCISENESS_EVALUATOR:
         try:
             CONCISENESS_EVALUATOR(
@@ -121,6 +121,62 @@ def test_multi_agent_real_question(sample_dataset_examples, model_config, exampl
         model_config["model_name"],
         model_config.get("api_key"),
         "math_eval_multi_lms"
+    )
+
+    # Log the actual output
+    t.log_outputs({"response": response})
+
+    # Apply correctness evaluator
+    if CORRECTNESS_EVALUATOR:
+        try:
+            CORRECTNESS_EVALUATOR(
+                inputs=question,
+                outputs=response,
+                reference_outputs=expected_answer
+            )
+        except Exception as e:
+            print(f"Correctness evaluator error: {e}")
+
+    # Apply conciseness evaluator
+    if CONCISENESS_EVALUATOR:
+        try:
+            CONCISENESS_EVALUATOR(
+                inputs=question,
+                outputs=response,
+                reference_outputs=expected_answer
+            )
+        except Exception as e:
+            print(f"Conciseness evaluator error: {e}")
+
+    # Basic assertions
+    assert response is not None, "Should receive a response from real API"
+    assert len(response) > 0, "Response should not be empty"
+
+@pytest.mark.integration
+@pytest.mark.real_api
+@pytest.mark.langsmith
+@pytest.mark.parametrize("model_config", MODELS_TO_TEST)
+@pytest.mark.parametrize("example_index", [0, 1, 2])
+def test_noexp_agent_real_question(sample_dataset_examples, model_config, example_index):
+    """Test no explanation agent with real Langflow API call using dataset questions."""
+    if not sample_dataset_examples or len(sample_dataset_examples) <= example_index:
+        pytest.skip("No dataset examples available")
+
+    example = sample_dataset_examples[example_index]
+    question = example.inputs["question"]
+    expected_answer = example.outputs["answer"]
+
+    # Log inputs and reference outputs for LangSmith
+    t.log_inputs({"question": question})
+    t.log_reference_outputs({"answer": expected_answer})
+
+    # Make real API call to Langflow no explanation endpoint
+    response = call_langflow_api(
+        question,
+        model_config["provider"],
+        model_config["model_name"],
+        model_config.get("api_key"),
+        "math_eval_noexp_lms"
     )
 
     # Log the actual output
