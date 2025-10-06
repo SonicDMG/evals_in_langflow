@@ -28,6 +28,14 @@ Evals In
 - Configurable via environment variables
 - Supports both Python and TypeScript ignores for clean development
 
+## Resources
+[Using LangSmith with Pytest](https://docs.langchain.com/langsmith/pytest#how-to-run-evaluations-with-pytest-beta)
+
+[Creating code evals in code using LangSmith](https://youtu.be/uqykG9Z8riU?si=nlbW52aSHCcMpocb)
+
+[AI Observability Explained](https://youtu.be/TDcT9ao47Tk?si=5imwX2M4BT8__983)
+
+
 ## 📦 Installation
 
 1.  **Clone the repository:**
